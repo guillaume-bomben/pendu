@@ -79,7 +79,7 @@ def bouton(message, x, y, largeur, hauteur, couleur_base, couleur_survol, action
 
 
 #############################################################################################################################
-#------------------------------------------ Creation de l'ecran d'aceuil ---------------------------------------------------#
+#------------------------------------------ Creation de l'ecran d'aceuill --------------------------------------------------#
 #############################################################################################################################
 
 
@@ -104,7 +104,7 @@ def home():
                 if click[0] == 1:
                     main_game()  # Lancer la fonction main_game()
             
-            # Bouton "Autre fonction"
+            # Bouton "Ajouter un mot"
             if 400 + 300 > mouse[0] > 400 and 300 + 50 > mouse[1] > 300:
                 pygame.draw.rect(screen, (150, 150, 150), (400, 300, 200, 50))
                 if click[0] == 1:
@@ -112,7 +112,7 @@ def home():
 
         # Affichage des boutons
         bouton("Démarrer le jeu", 400, 200, 300, 50, gray, red)
-        bouton("Autre fonction", 400, 300, 300, 50, gray, red)
+        bouton("Ajouter un mot", 400, 300, 300, 50, gray, red)
         
         pygame.display.update()
 
@@ -149,6 +149,8 @@ def main_game():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    home()
                 if event.unicode.isalpha():
                     letter = event.unicode.upper()
                     letters_guessed.add(letter) 
@@ -162,6 +164,7 @@ def main_game():
         screen.blit(image, (image_x, image_y))
         display_word = font.render(' '.join(word_status), True, white)
         screen.blit(display_word, (screen_width // 2 - display_word.get_width() // 2, screen_height // 2))
+        afficher_texte("Appuyez sur Echap pour revenir sur l'ecran d'aceuill", 100, 500)
 
         pygame.display.flip()
 
@@ -175,6 +178,7 @@ def main_game():
 
 def add_mot():
     running = True
+    mot_nouveau = ""
     while running:
         screen.fill(black)
 
@@ -182,8 +186,26 @@ def add_mot():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-            
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    home()
+                if event.key == pygame.K_RETURN:
+                    # Enregistrer le mot complet dans le fichier mots.txt
+                    with open("mots.txt", "a") as fichier:
+                        fichier.write('\n' + mot_nouveau.lower())
+                    mot_nouveau = ""  # Réinitialiser le mot pour le prochain ajout
+                else:
+                    # Récupérer les touches pressées pour former un mot
+                    if event.key in range(97, 123):  # Vérifie si la touche est une lettre minuscule
+                        lettre = chr(event.key).upper()  # Convertit la lettre en majuscule
+                        mot_nouveau += lettre
+        
+        afficher_texte("Appuyez sur Echap pour revenir sur l'ecran d'aceuill", 100, 100)
+        afficher_texte("Ajoutez des mots (Appuyez sur Enter pour terminer) :", 100, 150)
+        afficher_texte(f"Mot en cours: {mot_nouveau}", 100, 200)  # Affiche le mot en cours de formation
+        
+        pygame.display.update()
 
 
 
