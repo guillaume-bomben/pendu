@@ -103,7 +103,7 @@ def home():
                 pygame.draw.rect(screen, (150, 150, 150), (400, 200, 200, 50))
                 if click[0] == 1:
                     main_game()  # Lancer la fonction main_game()
-            
+
             # Bouton "Ajouter un mot"
             if 400 + 300 > mouse[0] > 400 and 300 + 50 > mouse[1] > 300:
                 pygame.draw.rect(screen, (150, 150, 150), (400, 300, 200, 50))
@@ -113,7 +113,7 @@ def home():
         # Affichage des boutons
         bouton("Démarrer le jeu", 400, 200, 300, 50, gray, red)
         bouton("Ajouter un mot", 400, 300, 300, 50, gray, red)
-        
+
         pygame.display.update()
 
 
@@ -126,17 +126,15 @@ def home():
 
 def main_game():
     global mot_initial, letters_guessed, word_status
-    
+
     running = True
     nbi = 0
     while running:
-        if nbi == 8 or ''.join(word_status) == mot_initial:
-            nbi = 0
-            mot_initial = mot_aleatoire("mots.txt")
-            print(mot_initial)
-            letters_guessed = set()
-            word_status = ["_" for _ in mot_initial]
-        
+        if nbi == 8:
+            loose()
+        elif ''.join(word_status) == mot_initial :
+            win()
+
         screen.fill(black)
         # Charger l'image
         image = pygame.image.load(f"Img-Pendu/pendu{nbi}.png")
@@ -160,7 +158,7 @@ def main_game():
                                 word_status[i] = letter
                     else:
                         nbi += 1
-                        
+
         screen.blit(image, (image_x, image_y))
         display_word = font.render(' '.join(word_status), True, white)
         screen.blit(display_word, (screen_width // 2 - display_word.get_width() // 2, screen_height // 2))
@@ -197,14 +195,57 @@ def add_mot():
                     mot_nouveau = ""  # Réinitialiser le mot pour le prochain ajout
                 else:
                     # Récupérer les touches pressées pour former un mot
-                    if event.key in range(97, 123):  # Vérifie si la touche est une lettre minuscule
-                        lettre = chr(event.key).upper()  # Convertit la lettre en majuscule
-                        mot_nouveau += lettre
-        
+                    lettre = chr(event.key)
+                    mot_nouveau += lettre
+
         afficher_texte("Appuyez sur Echap pour revenir sur l'ecran d'aceuill", 100, 100)
         afficher_texte("Ajoutez des mots (Appuyez sur Enter pour terminer) :", 100, 150)
         afficher_texte(f"Mot en cours: {mot_nouveau}", 100, 200)  # Affiche le mot en cours de formation
-        
+
+        pygame.display.update()
+
+
+
+#############################################################################################################################
+#----------------------------------------------- WIN or LOOSE --------------------------------------------------------------#
+#############################################################################################################################
+
+
+
+def win():
+    running = True
+    while running:
+        screen.fill(black)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN:
+                home()
+
+        afficher_texte("WIN : press any key to return to home", 100, 100)
+
+        pygame.display.update()
+
+
+
+def loose():
+    running = True
+    while running:
+        screen.fill(black)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.KEYDOWN:
+                home()
+
+        afficher_texte("LOOSE : press any key to return to home", 100, 100)
+
         pygame.display.update()
 
 
