@@ -408,8 +408,8 @@ def player_choice():
                     lettre = chr(event.key)
                     name_player += lettre
             
-        afficher_texte("Ajoutez des mots (Appuyez sur Enter pour terminer) :", 100, 150)
-        afficher_texte(f"Mot en cours: {name_player}", 100, 200)  # Affiche le mot en cours de formation
+        afficher_texte("Entrez votre pseudo (Appuyez sur Enter pour terminer) :", 100, 150)
+        afficher_texte(f"Pseudo : {name_player}", 100, 200)  # Affiche le mot en cours de formation
         
         pygame.display.update()
 
