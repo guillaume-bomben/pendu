@@ -19,10 +19,19 @@ white = (255, 255, 255)
 black = (0, 0, 0)
 gray = (128,128,128)
 red = (255,0,0)
+green = (0,255,0)
+orange = (255,128,0)
 
 font = pygame.font.Font('freesansbold.ttf', 32)
 
-
+background_home = pygame.image.load('fond/home pendu.png')
+background_diff = pygame.image.load('fond/diff menu.png')
+background_main = pygame.image.load('fond/fond main.png')
+background_loose = pygame.image.load('fond/fond loose.png')
+background_win = pygame.image.load('fond/fond win.png')
+background_add = pygame.image.load('fond/fond add mot.png')
+background_score = pygame.image.load('fond/fond score.png')
+background_player = pygame.image.load('fond/fond player.png')
 
 #############################################################################################################################
 #-------------------------------- Recuperer un mot aléatoire dans le fichier texte -----------------------------------------#
@@ -44,7 +53,7 @@ def mot_aleatoire(nom_fichier):
 
 
 
-def afficher_texte(texte, x, y, couleur=white):
+def afficher_texte(texte, x, y, couleur):
     texte_affiche = font.render(texte, True, couleur)
     screen.blit(texte_affiche, (x, y))
 
@@ -62,13 +71,20 @@ def bouton(message, x, y, largeur, hauteur, couleur_base, couleur_survol, action
 
     if x + largeur > souris[0] > x and y + hauteur > souris[1] > y:
         pygame.draw.rect(screen, couleur_survol, (x, y, largeur, hauteur))
-
         if clic[0] == 1 and action is not None:
             action()
     else:
         pygame.draw.rect(screen, couleur_base, (x, y, largeur, hauteur))
 
-    afficher_texte(message, x + 10, y + 10)
+    # Rendu du texte pour obtenir ses dimensions
+    texte_surface = font.render(message, True, white)
+    texte_rect = texte_surface.get_rect()
+
+    # Centrage du texte dans le bouton
+    texte_x = x + (largeur - texte_rect.width) / 2
+    texte_y = y + (hauteur - texte_rect.height) / 2
+
+    screen.blit(texte_surface, (texte_x, texte_y))
 
 
 
@@ -81,7 +97,7 @@ def bouton(message, x, y, largeur, hauteur, couleur_base, couleur_survol, action
 def home():
     running = True
     while running:
-        screen.fill(black)
+        screen.blit(background_home, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -142,13 +158,13 @@ def main_game():
                 update_score(500)
             win()
 
-        screen.fill(black)
+        screen.blit(background_main, (0, 0))
         # Charger l'image
         image = pygame.image.load(f"Img-Pendu/pendu{nbi}.png")
         image_width, image_height = image.get_rect().size
         # Position de l'image
         image_x = (screen_width - image_width) // 2  # Centrage en largeur
-        image_y = 10  # À 10 pixels du haut de la fenêtre
+        image_y = 100  # À 100 pixels du haut de la fenêtre
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -167,9 +183,8 @@ def main_game():
                         nbi += 1
 
         screen.blit(image, (image_x, image_y))
-        display_word = font.render(' '.join(word_status), True, white)
+        display_word = font.render(' '.join(word_status), True, red)
         screen.blit(display_word, (screen_width // 2 - display_word.get_width() // 2, screen_height // 2))
-        afficher_texte("Appuyez sur Echap pour revenir sur l'ecran d'aceuill", 100, 500)
 
         pygame.display.flip()
 
@@ -184,7 +199,7 @@ def main_game():
 def edit_diff_list():
     running = True
     while running:
-        screen.fill(black)
+        screen.blit(background_diff, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -196,27 +211,27 @@ def edit_diff_list():
             click = pygame.mouse.get_pressed()
 
             # Bouton "Démarrer le jeu"
-            if 400 + 300 > mouse[0] > 400 and 200 + 50 > mouse[1] > 200:
+            if 500 + 200 > mouse[0] > 500 and 200 + 50 > mouse[1] > 200:
                 pygame.draw.rect(screen, (150, 150, 150), (400, 200, 200, 50))
                 if click[0] == 1:
                     add_mot("mots_facile.txt")  # Lance l'edit de la liste facile
 
             # Bouton "Ajouter un mot"
-            if 400 + 300 > mouse[0] > 400 and 300 + 50 > mouse[1] > 300:
+            if 500 + 200 > mouse[0] > 500 and 300 + 50 > mouse[1] > 300:
                 pygame.draw.rect(screen, (150, 150, 150), (400, 300, 200, 50))
                 if click[0] == 1:
                     add_mot("mots_moyen.txt") # Lance l'edit de la liste moyenne
 
             # Bouton "Score"
-            if 400 + 300 > mouse[0] > 400 and 400 + 50 > mouse[1] > 400:
+            if 500 + 200 > mouse[0] > 500 and 400 + 50 > mouse[1] > 400:
                 pygame.draw.rect(screen, (150, 150, 150), (400, 300, 200, 50))
                 if click[0] == 1:
                     add_mot("mots_diff.txt") # Lance l'edit de la liste difficile
 
         # Affichage des boutons
-        bouton("Liste Facile", 400, 200, 300, 50, gray, red)
-        bouton("Liste Moyen", 400, 300, 300, 50, gray, red)
-        bouton("Liste Difficile", 400, 400, 300, 50, gray, red)
+        bouton("Liste Facile", 500, 200, 200, 50, gray, green)
+        bouton("Liste Moyen", 500, 300, 200, 50, gray, orange)
+        bouton("Liste Difficile", 500, 400, 200, 50, gray, red)
 
         pygame.display.update()
 
@@ -232,7 +247,7 @@ def add_mot(list_mot):
     running = True
     mot_nouveau = ""
     while running:
-        screen.fill(black)
+        screen.blit(background_add, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -252,9 +267,8 @@ def add_mot(list_mot):
                     lettre = chr(event.key)
                     mot_nouveau += lettre
 
-        afficher_texte("Appuyez sur Echap pour revenir sur l'ecran d'aceuill", 100, 100)
-        afficher_texte("Ajoutez des mots (Appuyez sur Enter pour terminer) :", 100, 150)
-        afficher_texte(f"Mot en cours: {mot_nouveau}", 100, 200)  # Affiche le mot en cours de formation
+        display_word = font.render(' '.join(mot_nouveau), True, red)
+        afficher_texte(f"{mot_nouveau}", screen_width // 2 - display_word.get_width() // 2, screen_height // 2,red) 
 
         pygame.display.update()
 
@@ -269,7 +283,7 @@ def add_mot(list_mot):
 def win():
     running = True
     while running:
-        screen.fill(black)
+        screen.blit(background_win, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -278,9 +292,6 @@ def win():
 
             if event.type == pygame.KEYDOWN:
                 home()
-
-        afficher_texte("WIN : press any key to return to home", 100, 100)
-
         pygame.display.update()
 
 
@@ -288,8 +299,8 @@ def win():
 def loose():
     running = True
     while running:
-        screen.fill(black)
-
+        screen.blit(background_loose, (0, 0))
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -297,15 +308,12 @@ def loose():
 
             if event.type == pygame.KEYDOWN:
                 home()
-
-        afficher_texte("LOOSE : press any key to return to home", 100, 100)
-
         pygame.display.update()
 
 
 
 #############################################################################################################################
-#----------------------------------------------- Ecran de Score ------------------------------------------------------------#
+#----------------------------------------- choix de difficulter ------------------------------------------------------------#
 #############################################################################################################################
 
 
@@ -315,7 +323,7 @@ def dificulty():
     diff = ""
     running = True
     while running:
-        screen.fill(black)
+        screen.blit(background_diff, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -327,7 +335,7 @@ def dificulty():
             click = pygame.mouse.get_pressed()
 
             # Bouton "Démarrer le jeu en facile"
-            if 400 + 300 > mouse[0] > 400 and 200 + 50 > mouse[1] > 200:
+            if 500 + 200 > mouse[0] > 500 and 200 + 50 > mouse[1] > 200:
                 pygame.draw.rect(screen, (150, 150, 150), (400, 200, 200, 50))
                 if click[0] == 1:
                     mot_initial = mot_aleatoire("mots_facile.txt")
@@ -338,7 +346,7 @@ def dificulty():
                     main_game()  # Lancer la fonction main_game()
 
             # Bouton "Démarrer le jeu en Moyen"
-            if 400 + 300 > mouse[0] > 400 and 300 + 50 > mouse[1] > 300:
+            if 500 + 200 > mouse[0] > 500 and 300 + 50 > mouse[1] > 300:
                 pygame.draw.rect(screen, (150, 150, 150), (400, 300, 200, 50))
                 if click[0] == 1:
                     mot_initial = mot_aleatoire("mots_moyen.txt")
@@ -349,7 +357,7 @@ def dificulty():
                     main_game()  # Lancer la fonction main_game()
 
             # Bouton "Démarrer le jeu en Difficile"
-            if 400 + 300 > mouse[0] > 400 and 400 + 50 > mouse[1] > 400:
+            if 500 + 200 > mouse[0] > 500 and 400 + 50 > mouse[1] > 400:
                 pygame.draw.rect(screen, (150, 150, 150), (400, 300, 200, 50))
                 if click[0] == 1:
                     mot_initial = mot_aleatoire("mots_diff.txt")
@@ -360,9 +368,9 @@ def dificulty():
                     main_game()  # Lancer la fonction main_game()
 
         # Affichage des boutons
-        bouton("Facile", 400, 200, 300, 50, gray, red)
-        bouton("Moyen", 400, 300, 300, 50, gray, red)
-        bouton("Difficile", 400, 400, 300, 50, gray, red)
+        bouton("Facile", 500, 200, 200, 50, gray, green)
+        bouton("Moyen", 500, 300, 200, 50, gray, orange)
+        bouton("Difficile", 500, 400, 200, 50, gray, red)
 
         pygame.display.update()
 
@@ -380,7 +388,7 @@ def player_choice():
     player_exists = False
     running = True
     while running:
-        screen.fill(black)
+        screen.blit(background_player, (0, 0))
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -408,8 +416,8 @@ def player_choice():
                     lettre = chr(event.key)
                     name_player += lettre
             
-        afficher_texte("Entrez votre pseudo (Appuyez sur Enter pour terminer) :", 100, 150)
-        afficher_texte(f"Pseudo : {name_player}", 100, 200)  # Affiche le mot en cours de formation
+        display_word = font.render(' '.join(name_player), True, red)
+        afficher_texte(f"{name_player}", screen_width // 2 - display_word.get_width() // 2, screen_height // 2, red)  # Affiche le mot en cours de formation
         
         pygame.display.update()
 
@@ -435,7 +443,7 @@ def score():
                 scores.append((player_name, player_score))  # Ajoute le nom et le score à la liste
 
     while running:
-        screen.fill(black)
+        screen.blit(background_score, (0, 0))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -444,10 +452,10 @@ def score():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     home()
-        y = 100
+        y = 150
         for player, score in scores:
-            score_text = f"{player}: {score}"
-            afficher_texte(score_text, 100, y)
+            score_text = f"{player} :       {score} points"
+            afficher_texte(score_text, 400, y,white)
             y += 40  # Espacement vertical entre chaque ligne du tableau
 
         pygame.display.update()
